@@ -1,21 +1,25 @@
-import { makeUser } from '@/test/factories/make-user'
-import { describe, expect, it } from 'vitest'
+import { describe, it, expect } from 'vitest'
+import { makeUser } from '../test/factories/make-user'
 import { getUserLevelAndExperience } from './get-user-level-and-experience'
+import {
+  calculateExperienceForNextLevel,
+  calculateLevelFromExperience,
+} from '../modules/gamification'
 
-describe('user user level and experience', () => {
-  it('should be able to get the user level and experience', async () => {
+describe('get user level and experience', () => {
+  it('should be able to get a user level and experience', async () => {
     const user = await makeUser({
       experience: 200,
     })
 
-    const result = await getUserLevelAndExperience({
-      userId: user.id,
-    })
+    const sut = await getUserLevelAndExperience({ userId: user.id })
 
-    expect(result).toEqual({
+    const level = calculateLevelFromExperience(200)
+
+    expect(sut).toEqual({
       experience: 200,
-      level: 6,
-      experienceToNextLevel: 74,
+      level: level,
+      experienceToNextLevel: calculateExperienceForNextLevel(level),
     })
   })
 })
